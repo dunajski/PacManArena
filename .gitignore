@@ -31,4 +31,11 @@
 *.out
 *.app
 
-*.idea
+build
+out
+.cache
+.idea
+.vs
+.vscode
+
+cmake-build-debug
