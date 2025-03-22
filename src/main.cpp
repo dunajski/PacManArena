@@ -1,21 +1,32 @@
-#include <SFML/Graphics.hpp>
+#include <iostream>
+#include <cstring>
+#include <string>
+#include <cstdio>
+#include "client.h"
+#include "server.h"
 
-int main()
+// I want to share Client and Server implementation in one repository, so there will be flags to run binary
+// --server and --client
+// --server have no GUI
+// Client shall be run with --client flag or without any flag
+int main(int const argc, char* argv[])
 {
-    auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "SFML TEST 1");
-    window.setFramerateLimit(144);
+    bool is_client{true};
 
-    while (window.isOpen())
+    // TODO consider checking this as first flag
+    for (int i = 0; i < argc; i++)
     {
-        while (const std::optional event = window.pollEvent())
+        if (strcmp(argv[i], "--server") == 0)
         {
-            if (event->is<sf::Event::Closed>())
-            {
-                window.close();
-            }
+            is_client = false;
         }
-
-        window.clear();
-        window.display();
+    }
+    if (is_client)
+    {
+        run_client();
+    }
+    else
+    {
+        run_server();
     }
 }
