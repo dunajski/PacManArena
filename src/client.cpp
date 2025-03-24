@@ -1,36 +1,41 @@
-#include <iostream>
+    #include <iostream>
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
+#include "client.h"
 
-int run_client()
+Client::Client()
 {
-    sf::TcpSocket socket;
+    std::cout << "Client is starting..." << std::endl;
+}
 
-    if (const sf::Socket::Status status = socket.connect({192, 168, 0, 123}, 53000); status != sf::Socket::Status::Done)
+void Client::connect_to_server()
+{
+    if (const sf::Socket::Status status = socket.connect(server_ip, port); status != sf::Socket::Status::Done)
     {
-        // TODO improve error handling
         std::cout << "Connection failed" << std::endl;
-        return 0;
+        return;
     }
 
     std::cout << "Connected" << std::endl;
     std::array<char, 1024> buffer{};
     if (std::size_t received = 0; socket.receive(buffer.data(), buffer.size(), received) != sf::Socket::Status::Done)
-        return 0; // TODO improve error handling
+        return;
     std::cout << "Message received from the server: " << std::quoted(buffer.data()) << std::endl;
 
     static constexpr std::string_view client_message = "Hello from client!";
     if (socket.send(client_message.data(), client_message.size()) != sf::Socket::Status::Done)
-        return 0; // TODO improve error handling
+        return; // TODO improve error handling
 
     std::cout << "Message sent to the server: " << std::quoted(client_message.data()) << std::endl;
+}
 
+void Client::show_window()
+{
     auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "SFML TEST 1");
     window.setFramerateLimit(144);
 
     while (window.isOpen())
     {
-
         while (const std::optional event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
@@ -42,6 +47,6 @@ int run_client()
         window.clear();
         window.display();
     }
-
-    return 0;
 }
+
+

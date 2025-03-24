@@ -23,10 +23,13 @@ int main(int const argc, char* argv[])
     }
     if (is_client)
     {
-        run_client();
+        Client client;
+        client.connect_to_server();
+        client.show_window();
     }
     else
     {
-        run_server();
+        Server server;
+        server.start();
     }
 }
