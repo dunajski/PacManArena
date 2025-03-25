@@ -11,13 +11,19 @@ Server::Server() : ip(sf::IpAddress::getLocalAddress().value())
     std::cout << "Server is starting..." << std::endl;
 }
 
-/// @brief Starts the server to listen for incoming connections and handle communication.
-/// @details This method begins by binding the server to the specified IP and port.
-///          Then, it waits for an incoming connection from a client. Once a connection 
-///          is established, the server sends a greeting message to the client and awaits 
-///          a response. If any error occurs during the process (e.g., failing to listen, 
-///          accept, send, or receive), the procedure is terminated and relevant error 
-///          messages are logged to the console.
+/// @brief Starts the server and listens for incoming client connections.
+/// @details This function initializes the server's listening socket, adds the socket 
+///          to a sf::SocketSelector to monitor multiple connections, and enters a loop
+///          to handle client connections and messages. 
+///          - Listens for client connection requests.
+///          - Accepts connections from new clients and sends a welcome message.
+///          - Receives data from clients and processes their messages.
+///          - Handles client disconnection.
+///
+/// @note This function operates in a loop, so it will block until the server is shut down.
+///       The function uses a non-blocking mechanism (via sf::SocketSelector) to avoid 
+///       resource wastage during idle periods.
+///
 void Server::start()
 {
     std::cout << "...listening on: " << ip.toString() << ":" << port  << std::endl;
@@ -28,27 +34,90 @@ void Server::start()
         return;
     }
 
-    if (listener.accept(socket) != sf::Socket::Status::Done)
+    selector.add(listener);
+
+    running = true;
+
+    // TODO there is no quit here
+    while (running)
     {
-        std::cout << "Failed to accept connection" << std::endl;
-        return;
+        // selector.wait - waits until one or more sockets are ready
+        if (selector.wait(sf::seconds(0.1)))
+        {
+            // check listener socket if there is a new client to connect
+            if (selector.isReady(listener))
+            {
+                auto client = std::make_unique<sf::TcpSocket>();
+                if (listener.accept(*client) == sf::Socket::Status::Done)
+                {
+                    std::cout << "Connected: " << client->getRemoteAddress().value() << std::endl;
+
+                    selector.add(*client);
+                    clients.push_back(std::move(client));
+
+                    static constexpr std::string_view server_message = "Hello from server!";
+                    if (clients.back()->send(server_message.data(), server_message.size()) != sf::Socket::Status::Done)
+                    {
+                        std::cout << "Failed to send welcome message to client" << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << "Welcome message sent to client" << std::endl;
+                    }
+                }
+            }
+
+            // Check for messages from clients
+            for (auto c = clients.begin(); c != clients.end();)
+            {
+                sf::TcpSocket& client = **c;
+
+                if (selector.isReady(client))
+                {
+                    // The client has sent some data
+                    std::array<char, 1024> buffer{};
+                    std::size_t received;
+
+                    sf::Socket::Status status = client.receive(buffer.data(), buffer.size(), received);
+
+                    if (status == sf::Socket::Status::Done)
+                    {
+                        std::cout << "Message from client " << client.getRemoteAddress().value()
+                                 << ": " << std::quoted(buffer.data()) << std::endl;
+
+                    }
+                    else if (status == sf::Socket::Status::Disconnected)
+                    {
+                        std::cout << "Client disconnected: " << client.getRemoteAddress().value() << std::endl;
+                        selector.remove(client);
+                        c = clients.erase(c);
+                        continue;
+                    }
+                }
+
+                ++c;
+            }
+
+        }
     }
-
-    std::cout << "Connected: " << socket.getRemoteAddress().value() << std::endl;
-    static constexpr std::string_view server_message = "Hello from server!";
-
-    if (socket.send(server_message.data(), server_message.size()) != sf::Socket::Status::Done)
-        return;
-
-    std::cout << "Message sent to the client: " << std::quoted(server_message.data()) << std::endl;
-
-    if (socket.receive(buff_in.data(), buff_in.size(), received) != sf::Socket::Status::Done)
-        return;
-
-    std::cout << "Message received from the client: " << std::quoted(buff_in.data()) << std::endl;
 }
 
 void Server::shutdown()
 {
+    running = false;
+
+    // Close all client connections
+    for (auto& client : clients)
+    {
+        selector.remove(*client);
+        client->disconnect();
+    }
+    clients.clear();
+
+    // Close the listener
+    selector.remove(listener);
     listener.close();
+
+    std::cout << "Server shutdown complete" << std::endl;
+
 }
