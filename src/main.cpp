@@ -24,8 +24,7 @@ int main(int const argc, char* argv[])
     if (is_client)
     {
         Client client;
-        client.connect_to_server();
-        client.show_window();
+        client.init_connection_and_run();
     }
     else
     {

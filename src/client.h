@@ -6,9 +6,11 @@ class Client
 public:
     Client();
     ~Client() = default;
-    void connect_to_server();
+    void init_connection_and_run();
     void exit_app();
     void show_window();
+    void send_to_server(const std::string& data);
+    void run_game();
 
 private:
     const  sf::IpAddress server_ip = {192, 168, 0, 123};
@@ -16,7 +18,8 @@ private:
     static constexpr auto buff_size = 1024;
     // TODO copy in server module/class, shall be shared
     sf::TcpSocket socket;
+    sf::SocketSelector selector;
     std::array<char, buff_size> buff_in{};
     std::array<char, buff_size> buff_out{};
-    std::size_t received{};
+    bool is_connected{false};
 };

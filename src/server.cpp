@@ -67,23 +67,21 @@ void Server::start()
                 }
             }
 
-            // Check for messages from clients
+            // check for messages from clients
             for (auto c = clients.begin(); c != clients.end();)
             {
                 sf::TcpSocket& client = **c;
 
                 if (selector.isReady(client))
                 {
-                    // The client has sent some data
-                    std::array<char, 1024> buffer{};
+                    // client has sent some data
                     std::size_t received;
-
-                    sf::Socket::Status status = client.receive(buffer.data(), buffer.size(), received);
+                    sf::Socket::Status status = client.receive(buff_in.data(), buff_in.size(), received);
 
                     if (status == sf::Socket::Status::Done)
                     {
                         std::cout << "Message from client " << client.getRemoteAddress().value()
-                                 << ": " << std::quoted(buffer.data()) << std::endl;
+                                  << ": " << std::quoted(buff_in.data()) << std::endl;
 
                     }
                     else if (status == sf::Socket::Status::Disconnected)
@@ -119,5 +117,4 @@ void Server::shutdown()
     listener.close();
 
     std::cout << "Server shutdown complete" << std::endl;
-
 }

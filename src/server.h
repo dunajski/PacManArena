@@ -22,6 +22,5 @@ private:
     std::vector<std::unique_ptr<sf::TcpSocket>> clients;
     std::array<char, buff_size> buff_in{};
     std::array<char, buff_size> buff_out{};
-    std::size_t received{};
     bool running{false};
 };
