@@ -29,26 +29,5 @@ Projekt został podzielony na dwie główne aplikacje:
 - CMake
 - Opcjonalnie: CLion / Visual Studio Code
 
-### Instalacja
-1. Sklonuj repozytorium:
-   ```sh
-   git clone https://github.com/TwojeRepozytorium.git
-   cd Pac-Man-Arena
-   ```
-2. Skonfiguruj projekt przy użyciu CMake:
-   ```sh
-   mkdir build && cd build
-   cmake ..
-   make
-   ```
-3. Uruchom serwer:
-   ```sh
-   ./server
-   ```
-4. Uruchom klienta:
-   ```sh
-   ./client
-   ```
-
 ## Autor
 Michał Dunajski – michal.dunajski.stud@pw.edu.pl

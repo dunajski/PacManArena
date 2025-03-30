@@ -18,7 +18,6 @@ private:
     sf::IpAddress ip;
     sf::TcpListener listener;
     sf::SocketSelector selector;
-    // TODO socket, buffs, received, for each client
     std::vector<std::unique_ptr<sf::TcpSocket>> clients;
     std::array<char, buff_size> buff_in{};
     std::array<char, buff_size> buff_out{};

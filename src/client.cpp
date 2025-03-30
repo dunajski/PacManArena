@@ -3,9 +3,17 @@
 #include <SFML/Graphics.hpp>
 #include "client.h"
 
+#include "game.h"
+
 Client::Client()
 {
     std::cout << "Client is starting..." << std::endl;
+}
+
+Client::~Client()
+{
+    selector.remove(socket);
+    socket.disconnect();
 }
 
 void Client::init_connection_and_run()
@@ -23,16 +31,16 @@ void Client::init_connection_and_run()
     std::cout << "Message received from the server: " << std::quoted(buff_in.data()) << std::endl;
 
     static constexpr std::string_view client_message = "Hello from client!";
-    this->send_to_server(client_message.data());
+    send_to_server(client_message.data());
     std::cout << "Message sent to the server: " << std::quoted(client_message.data()) << std::endl;
 
     // I want to use non-blocking socket to run checking every 10 ms, I know that I could use threads
     // ,but I want to use something simpler
-    this->selector.add(socket);
+    selector.add(socket);
     socket.setBlocking(false);
 
     // now start rendering and handle data between connected client and server
-    this->run_game();
+    run_game();
 }
 
 void Client::send_to_server(const std::string& data)
@@ -49,6 +57,10 @@ void Client::run_game()
 {
     auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "SFML TEST 1");
     window.setFramerateLimit(144);
+
+    // DEBUG, shall be removed later
+    auto game_instance = std::make_unique<Game>();
+    game_instance->start_game();
 
     while (window.isOpen() && is_connected)
     {
