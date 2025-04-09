@@ -3,7 +3,6 @@
 #include <vector>
 #include <memory>
 
-// Forward declaration of GameEntity
 class GameEntity;
 
 struct Position {

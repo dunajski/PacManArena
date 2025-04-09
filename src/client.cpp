@@ -106,8 +106,8 @@ void Client::run_game()
         #endif
 
         window.clear();
-        drawer.draw_grid(grid);
-        drawer.draw_entities(entities);
+        // drawer.draw_grid(grid);
+        // drawer.draw_entities(entities);
         drawer.draw_game_entities(game_instance->get_all_entities());
         window.display();
     }

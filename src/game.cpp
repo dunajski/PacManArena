@@ -13,8 +13,10 @@ bool Game::start_game()
 
 bool Game::load_game_entities()
 {
-    // Example: Add Pacman at position (5, 5)
-    add_game_entity(std::make_unique<Pacman>(), {5, 5});
+    auto pacman = std::make_unique<Pacman>();
+    pacman->init_shape(460.0f/25.0f);
+    pacman->make_visible();
+    add_game_entity(std::move(pacman), {5,5});
 
     return true;
 }

@@ -6,5 +6,6 @@
 class Pacman : public GameEntity {
 public:
     Pacman() {std::cout << "Pacman constructor" << std::endl;}
-    ~Pacman() = default;
+    ~Pacman() override = default;
+    void init_shape(float tile_size) override;
 };

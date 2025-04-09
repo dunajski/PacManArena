@@ -28,10 +28,11 @@ GameEntity::~GameEntity()
     is_visible = false; // Keep this if visibility needs to be reset
 }
 
-bool GameEntity::load_texture(const std::string& texture_path)
-{
-    const auto load_status = texture.loadFromFile(texture_path);
-    if (load_status == false)
-        std::cout << "Failed to load texture: " << texture_path << std::endl;
-    return load_status;
+void GameEntity::set_shape(std::unique_ptr<sf::Shape> new_shape) {
+    shape = std::move(new_shape);
+    if (shape)
+        shape->setPosition(position);
+}
+void GameEntity::init_shape(float tile_size) {
+    // by default nothing, shall be done in derivied class
 }

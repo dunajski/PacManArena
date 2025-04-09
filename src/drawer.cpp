@@ -1,6 +1,5 @@
 #include "game_entity.h"
 #include "drawer.h"
-#include "SFML/Graphics/Sprite.hpp"
 #include "game.h"
 
 Drawer::Drawer(sf::RenderWindow& window)
@@ -35,17 +34,15 @@ void Drawer::draw_entities(const std::vector<sf::Vector2f>& entity_positions) {
 
 void Drawer::draw_game_entities(const std::vector<std::unique_ptr<GameEntity>>& game_entities) {
     for (const auto& entity : game_entities) {
-        // if (entity->get_texture().getSize() != sf::Vector2u(0, 0)) {
-            // sf::Sprite sprite(entity->get_texture());
-            // sprite.setPosition(sf::Vector2f(entity->get_position().x, entity->get_position().y));
-            // window.draw(sprite);
-            sf::RectangleShape test(sf::Vector2f(tileSize, tileSize));
-            test.setOutlineColor(sf::Color::Blue);
-            test.setOutlineThickness(3);
-            test.setFillColor(sf::Color::Red);
-            test.setPosition(sf::Vector2f(gameOffsetX + entity->get_position().x, gameOffsetY + entity->get_position().y));
-            entity->set_position(entity->get_position().x > gameOffsetX ? gameOffsetX : entity->get_position().x+0.4, entity->get_position().y > gameOffsetY ? gameOffsetY : entity->get_position().y+0.7);
-            window.draw(test);
-        // }
+        if (!entity || !entity->is_e_visible() || !entity->get_shape())
+            continue;
+
+        sf::Shape* shape = entity->get_shape();
+        auto draw_position = sf::Vector2f(
+            gameOffsetX + entity->get_position().x * tileSize,
+            gameOffsetY + entity->get_position().y * tileSize
+        );
+        shape->setPosition(draw_position);
+        window.draw(*shape);
     }
 }
