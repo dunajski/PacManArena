@@ -2,6 +2,7 @@
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
 #include "client.h"
+#include "drawer.h"
 
 #include "game.h"
 
@@ -16,8 +17,11 @@ Client::~Client()
     socket.disconnect();
 }
 
+#define RUN_ONLY_CLIENT 0
+
 void Client::init_connection_and_run()
 {
+    #if RUN_ONLY_CLIENT
     if (const sf::Socket::Status status = socket.connect(server_ip, port); status != sf::Socket::Status::Done)
     {
         std::cout << "Connection failed" << std::endl;
@@ -38,6 +42,9 @@ void Client::init_connection_and_run()
     // ,but I want to use something simpler
     selector.add(socket);
     socket.setBlocking(false);
+    #else
+    is_connected = true;
+    #endif
 
     // now start rendering and handle data between connected client and server
     run_game();
@@ -55,12 +62,16 @@ void Client::send_to_server(const std::string& data)
 
 void Client::run_game()
 {
-    auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "SFML TEST 1");
+    auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "Pac-Man Arena");
     window.setFramerateLimit(144);
 
-    // DEBUG, shall be removed later
     auto game_instance = std::make_unique<Game>();
     game_instance->start_game();
+
+    Drawer drawer(window);
+
+    std::vector<std::vector<int>> grid(31, std::vector<int>(28, 1)); // Example grid
+    std::vector<sf::Vector2f> entities = {{5, 5}, {10, 10}};       // Example entities
 
     while (window.isOpen() && is_connected)
     {
@@ -71,7 +82,7 @@ void Client::run_game()
                 window.close();
             }
         }
-
+        #if RUN_ONLY_CLIENT
         // check every 10 ms that there is something data to handle
         if (selector.wait(sf::milliseconds(10)))
         {
@@ -92,8 +103,12 @@ void Client::run_game()
                 }
             }
         }
+        #endif
 
         window.clear();
+        drawer.draw_grid(grid);
+        drawer.draw_entities(entities);
+        drawer.draw_game_entities(game_instance->get_all_entities());
         window.display();
     }
 }

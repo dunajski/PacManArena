@@ -2,9 +2,19 @@
 
 #include <iostream>
 
-void GameEntity::set_position(int x, int y)
+void GameEntity::set_position(float x, float y)
 {
-    position = sf::Vector2i(x, y);
+    if (x < 0 || y < 0) // Validate position
+    {
+        std::cerr << "Invalid position: (" << x << ", " << y << ")" << std::endl;
+        return;
+    }
+    position = sf::Vector2f(x, y);
+}
+
+void GameEntity::set_position(const Position& pos)
+{
+    set_position(pos.x, pos.y); // Delegate to the existing function
 }
 
 GameEntity::GameEntity()
@@ -15,8 +25,7 @@ GameEntity::GameEntity()
 GameEntity::~GameEntity()
 {
     std::cout << "Game Entity destroyed" << std::endl;
-    position = sf::Vector2i(0, 0);
-    is_visible = false;
+    is_visible = false; // Keep this if visibility needs to be reset
 }
 
 bool GameEntity::load_texture(const std::string& texture_path)
