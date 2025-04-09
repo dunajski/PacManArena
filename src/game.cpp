@@ -1,5 +1,8 @@
 #include "game.h"
 #include "pacman.h"
+#include "ghost.h"
+#include "dot.h"
+#include "power_dot.h"
 
 bool Game::start_game()
 {
@@ -13,10 +16,27 @@ bool Game::start_game()
 
 bool Game::load_game_entities()
 {
+    float tile = 560.0f / 25.0f;
+
     auto pacman = std::make_unique<Pacman>();
-    pacman->init_shape(460.0f/25.0f);
+    pacman->init_shape(tile);
     pacman->make_visible();
-    add_game_entity(std::move(pacman), {5,5});
+    add_game_entity(std::move(pacman), {5, 5});
+
+    auto ghost = std::make_unique<Ghost>();
+    ghost->init_shape(tile);
+    ghost->make_visible();
+    add_game_entity(std::move(ghost), {7, 5});
+
+    auto dot = std::make_unique<Dot>();
+    dot->init_shape(tile);
+    dot->make_visible();
+    add_game_entity(std::move(dot), {10, 10});
+
+    auto power_dot = std::make_unique<PowerDot>();
+    power_dot->init_shape(tile);
+    power_dot->make_visible();
+    add_game_entity(std::move(power_dot), {13, 13});
 
     return true;
 }

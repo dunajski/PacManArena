@@ -19,6 +19,9 @@ add_executable(main
     src/game_entity.cpp
     src/pacman.cpp
     src/drawer.cpp
-    src/game.cpp)
+    src/game.cpp
+    src/ghost.cpp
+    src/dot.cpp
+    src/power_dot.cpp)
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE SFML::Graphics SFML::Network)
