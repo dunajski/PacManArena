@@ -107,12 +107,23 @@ void Pacman::update(float dt, const std::vector<std::vector<int>>& map_data)
 
         int new_x_pos = get_position().x;
         int new_y_pos = get_position().y;
-
+        auto shape = get_shape();
         switch (curr_direction) {
-        case MoveDirection::UP:    new_y_pos -= 1; break;
-        case MoveDirection::DOWN:  new_y_pos += 1; break;
-        case MoveDirection::LEFT:  new_x_pos -= 1; break;
-        case MoveDirection::RIGHT: new_x_pos += 1; break;
+        case MoveDirection::UP:
+            new_y_pos -= 1;
+            shape->setRotation(sf::degrees(-90));
+            break;
+        case MoveDirection::DOWN:  new_y_pos += 1;
+            shape->setRotation(sf::degrees(90));
+            break;
+        case MoveDirection::LEFT:
+            new_x_pos -= 1;
+            shape->setRotation(sf::degrees(-180));
+            break;
+        case MoveDirection::RIGHT:
+            new_x_pos += 1;
+            shape->setRotation(sf::degrees(0));
+            break;
         default: break;
         }
 
