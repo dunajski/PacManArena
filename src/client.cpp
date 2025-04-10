@@ -18,7 +18,8 @@ Client::~Client()
     socket.disconnect();
 }
 
-#define RUN_ONLY_CLIENT 1
+// if you want to only debug 'local' game, change it to 0 (I know, inverted logic)
+#define RUN_ONLY_CLIENT 0
 
 void Client::init_connection_and_run()
 {
