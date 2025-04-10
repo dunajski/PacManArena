@@ -130,4 +130,29 @@ void Game::update(float dt)
             entity->update(dt, map_layout);
         }
     }
+
+    sf::Vector2i pac_man_pos = pacman_ptr->get_position();
+
+    // iterate over entities
+    for (int i = game_entities.size() - 1; i >= 0; --i)
+    {
+        auto& e = game_entities[i];
+        if (!e) continue;
+
+        // if entity position equeals pac-man pos...
+        if (e->get_position() == pac_man_pos)
+        {
+            // ... if it is 'Dot'
+            if (dynamic_cast<Dot*>(e.get()))
+            {
+                score += 10;
+                game_entities.erase(game_entities.begin() + i);
+            }
+            else if (dynamic_cast<PowerDot*>(e.get())) // ... or 'PowerDot'
+            {
+                score += 50;
+                game_entities.erase(game_entities.begin() + i);
+            }
+        }
+    }
 }
