@@ -1,21 +1,72 @@
 #include "game_entity.h"
 #include "drawer.h"
 
+#include <iostream>
+#include <SFML/Graphics/Font.hpp>
+#include "dot.h"
+#include "power_dot.h"
+#include "ghost.h"
+#include "pacman.h"
+
+
+
 Drawer::Drawer(sf::RenderWindow& window)
     : window(window), game_offset_x((1920 - 560) / 2.0f), game_offset_y((1080 - 620) / 2.0f) {}
 
 void Drawer::draw_game_entities(const std::vector<std::unique_ptr<GameEntity>>& game_entities) {
-    for (const auto& entity : game_entities) {
+    // first, draw Dot and PowerDot entities:
+    for (auto& entity : game_entities) {
         if (!entity || !entity->is_e_visible() || !entity->get_shape())
             continue;
 
-        sf::Shape* shape = entity->get_shape();
-        auto draw_position = sf::Vector2f(
-            game_offset_x + entity->get_position().x * tile_size + tile_size/2.0f,
-            game_offset_y + entity->get_position().y * tile_size + tile_size/2.0f
-        );
-        shape->setPosition(draw_position);
-        window.draw(*shape);
+        if (dynamic_cast<Dot*>(entity.get()) || dynamic_cast<PowerDot*>(entity.get())) {
+            sf::Shape* shape = entity->get_shape();
+
+            auto draw_position = sf::Vector2f(
+                game_offset_x + entity->get_position().x * tile_size + tile_size / 2.0f,
+                game_offset_y + entity->get_position().y * tile_size + tile_size / 2.0f
+            );
+
+            shape->setPosition(draw_position);
+            window.draw(*shape);
+        }
+    }
+
+    // next, draw Ghost entities:
+    for (auto& entity : game_entities) {
+        if (!entity || !entity->is_e_visible() || !entity->get_shape())
+            continue;
+
+        if (dynamic_cast<Ghost*>(entity.get())) {
+            sf::Shape* shape = entity->get_shape();
+
+            auto draw_position = sf::Vector2f(
+                game_offset_x + entity->get_position().x * tile_size + tile_size / 2.0f,
+                game_offset_y + entity->get_position().y * tile_size + tile_size / 2.0f
+            );
+
+            shape->setPosition(draw_position);
+            window.draw(*shape);
+        }
+    }
+
+    // draw Pac-Man last
+    for (auto& entity : game_entities) {
+        if (!entity || !entity->is_e_visible() || !entity->get_shape())
+            continue;
+
+        // Check if the entity is Pac-Man.
+        if (dynamic_cast<Pacman*>(entity.get())) {
+            sf::Shape* shape = entity->get_shape();
+
+            auto draw_position = sf::Vector2f(
+                game_offset_x + entity->get_position().x * tile_size + tile_size / 2.0f,
+                game_offset_y + entity->get_position().y * tile_size + tile_size / 2.0f
+            );
+
+            shape->setPosition(draw_position);
+            window.draw(*shape);
+        }
     }
 }
 
