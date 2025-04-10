@@ -33,5 +33,7 @@ public:
     Pacman* get_pacman() const { return pacman_ptr;}
 
     void update(float dt);
+    int get_lives_remaining() const { return lives_remaining; }
+    int get_score() const { return score; }
 };
 

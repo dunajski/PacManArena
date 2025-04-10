@@ -132,6 +132,7 @@ void Client::run_game()
         window.clear();
         drawer.draw_map(game_instance->get_map_layout());
         drawer.draw_game_entities(game_instance->get_all_entities());
+        drawer.draw_score(game_instance->get_score());
         window.display();
     }
 }

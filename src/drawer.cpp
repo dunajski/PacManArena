@@ -41,3 +41,30 @@ void Drawer::draw_map(const std::vector<std::vector<int>>& grid)
         }
     }
 }
+
+void Drawer::draw_score(int score)
+{
+    static sf::Font font;
+    static bool loaded = false;
+    // std::filesystem::path path = std::filesystem::current_path();
+    // std::cout << path.string() << std::endl;
+
+    // https://www.dafont.com/minecraft.font
+    // there will be problem with font path I think...
+    if (!loaded) {
+        if (!font.openFromFile("../bin/minecraft.ttf")) {
+            std::cerr << "Failed to load font." << std::endl;
+        }
+        loaded = true;
+    }
+
+    sf::Text text(font);
+    text.setFont(font);
+    text.setString("Score: " + std::to_string(score));
+    text.setCharacterSize(30);
+    text.setFillColor(sf::Color::Yellow);
+
+    text.setPosition(sf::Vector2f{game_offset_x, game_offset_y - 40.f});
+
+    window.draw(text);
+}
