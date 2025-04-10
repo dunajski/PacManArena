@@ -2,7 +2,7 @@
 
 ## Opis projektu
 Pac-Man Arena to wieloosobowa gra online inspirowana klasycznym Pac-Manem. Gra umożliwia rozgrywkę dla czterech graczy w trybie survival, gdzie ostatni ocalały zostaje zwycięzcą.
-
+![img.png](img.png)
 ## Funkcjonalności
 - Gra wieloosobowa online dla 4 graczy
 - Tryb survival – gra trwa do momentu, aż zostanie tylko jeden gracz
