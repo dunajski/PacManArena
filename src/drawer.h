@@ -5,7 +5,7 @@
 
 class Drawer {
 public:
-    Drawer(sf::RenderWindow& window);
+    Drawer(sf::RenderWindow& window, float view_width = 1920.f, float view_height = 1080.f);
     float get_tile_size() const {return tile_size;}
     void draw_map(const std::vector<std::vector<int>>& grid);
     void draw_game_entities(const std::vector<std::unique_ptr<GameEntity>>& game_entities);

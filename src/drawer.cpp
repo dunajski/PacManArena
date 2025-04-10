@@ -8,18 +8,23 @@
 #include "ghost.h"
 #include "pacman.h"
 
+Drawer::Drawer(sf::RenderWindow& window, float view_width, float view_height)
+    : window(window),
+      game_offset_x((view_width - 560.f) / 2.0f),
+      game_offset_y((view_height - 620.f) / 2.0f + 80.f)
+{
+} // those + px for score
 
-
-Drawer::Drawer(sf::RenderWindow& window)
-    : window(window), game_offset_x((1920 - 560) / 2.0f), game_offset_y((1080 - 620) / 2.0f) {}
-
-void Drawer::draw_game_entities(const std::vector<std::unique_ptr<GameEntity>>& game_entities) {
+void Drawer::draw_game_entities(const std::vector<std::unique_ptr<GameEntity>>& game_entities)
+{
     // first, draw Dot and PowerDot entities:
-    for (auto& entity : game_entities) {
+    for (auto& entity : game_entities)
+    {
         if (!entity || !entity->is_e_visible() || !entity->get_shape())
             continue;
 
-        if (dynamic_cast<Dot*>(entity.get()) || dynamic_cast<PowerDot*>(entity.get())) {
+        if (dynamic_cast<Dot*>(entity.get()) || dynamic_cast<PowerDot*>(entity.get()))
+        {
             sf::Shape* shape = entity->get_shape();
 
             auto draw_position = sf::Vector2f(
@@ -33,11 +38,13 @@ void Drawer::draw_game_entities(const std::vector<std::unique_ptr<GameEntity>>& 
     }
 
     // next, draw Ghost entities:
-    for (auto& entity : game_entities) {
+    for (auto& entity : game_entities)
+    {
         if (!entity || !entity->is_e_visible() || !entity->get_shape())
             continue;
 
-        if (dynamic_cast<Ghost*>(entity.get())) {
+        if (dynamic_cast<Ghost*>(entity.get()))
+        {
             sf::Shape* shape = entity->get_shape();
 
             auto draw_position = sf::Vector2f(
@@ -51,12 +58,14 @@ void Drawer::draw_game_entities(const std::vector<std::unique_ptr<GameEntity>>& 
     }
 
     // draw Pac-Man last
-    for (auto& entity : game_entities) {
+    for (auto& entity : game_entities)
+    {
         if (!entity || !entity->is_e_visible() || !entity->get_shape())
             continue;
 
         // Check if the entity is Pac-Man.
-        if (dynamic_cast<Pacman*>(entity.get())) {
+        if (dynamic_cast<Pacman*>(entity.get()))
+        {
             sf::Shape* shape = entity->get_shape();
 
             auto draw_position = sf::Vector2f(
@@ -77,7 +86,8 @@ void Drawer::draw_map(const std::vector<std::vector<int>>& grid)
     wall.setFillColor(sf::Color::Blue);
     wall.setOutlineThickness(1);
 
-    for (size_t row = 0; row < grid.size(); ++row) {
+    for (size_t row = 0; row < grid.size(); ++row)
+    {
         for (size_t col = 0; col < grid[row].size(); ++col)
         {
             int cell = grid[row][col];
@@ -102,8 +112,10 @@ void Drawer::draw_score(int score)
 
     // https://www.dafont.com/minecraft.font
     // there will be problem with font path I think...
-    if (!loaded) {
-        if (!font.openFromFile("../bin/minecraft.ttf")) {
+    if (!loaded)
+    {
+        if (!font.openFromFile("../bin/minecraft.ttf"))
+        {
             std::cerr << "Failed to load font." << std::endl;
         }
         loaded = true;

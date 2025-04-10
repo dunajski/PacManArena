@@ -18,7 +18,7 @@ Client::~Client()
     socket.disconnect();
 }
 
-#define RUN_ONLY_CLIENT 0
+#define RUN_ONLY_CLIENT 1
 
 void Client::init_connection_and_run()
 {
@@ -63,14 +63,34 @@ void Client::send_to_server(const std::string& data)
 
 void Client::run_game()
 {
-    auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "Pac-Man Arena");
+    auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "Pac-Man Arena", sf::State::Fullscreen);
     window.setFramerateLimit(144);
 
-    auto game_instance = std::make_unique<Game>();
-    game_instance->initialize_map();
-    game_instance->start_game();
+    // it is weird... stolen from web
+    // https://www.sfml-dev.org/tutorials/3.0/graphics/view/#defining-what-the-view-views
+    sf::View views[4];
 
-    Drawer drawer(window);
+    views[0].setViewport(sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(0.5f, 0.5f)));
+    views[1].setViewport(sf::FloatRect(sf::Vector2f(0.5f, 0.f), sf::Vector2f(0.5f, 0.5f)));
+    views[2].setViewport(sf::FloatRect(sf::Vector2f(0.f, 0.5f), sf::Vector2f(0.5f, 0.5f)));
+    views[3].setViewport(sf::FloatRect(sf::Vector2f(0.5f, 0.5f), sf::Vector2f(0.5f, 0.5f)));
+
+    constexpr float view_width = 960.f;
+    constexpr float view_height = 540.f;
+
+    for (auto& view : views) {
+        view.setSize(sf::Vector2f(view_width, view_height));
+        view.setCenter(sf::Vector2f(view_width / 2.f, view_height / 2.f));
+    }
+    std::unique_ptr<Game> games[4];
+    std::unique_ptr<Drawer> drawers[4];
+
+    for (int i = 0; i < 4; ++i) {
+        games[i] = std::make_unique<Game>();
+        games[i]->initialize_map();
+        games[i]->start_game();
+        drawers[i] = std::make_unique<Drawer>(window, view_width, view_height);
+    }
 
     sf::Clock clock;
 
@@ -85,22 +105,19 @@ void Client::run_game()
             }
             else if (const auto* key_pressed = event->getIf<sf::Event::KeyPressed>())
             {
-                auto pac = game_instance->get_pacman();
-                if (key_pressed->scancode == sf::Keyboard::Scan::Right)
-                {
-                    pac->set_direction(MoveDirection::RIGHT);
-                }
-                else if (key_pressed->scancode == sf::Keyboard::Scan::Left)
-                {
-                    pac->set_direction(MoveDirection::LEFT);
-                }
-                else if (key_pressed->scancode == sf::Keyboard::Scan::Up)
-                {
-                    pac->set_direction(MoveDirection::UP);
-                }
-                else if (key_pressed->scancode == sf::Keyboard::Scan::Down)
-                {
-                    pac->set_direction(MoveDirection::DOWN);
+                if (key_pressed->scancode == sf::Keyboard::Scan::Escape)
+                    window.close();
+
+                for (auto& game : games) {
+                    auto pac = game->get_pacman();
+                    if (key_pressed->scancode == sf::Keyboard::Scan::Right)
+                        pac->set_direction(MoveDirection::RIGHT);
+                    else if (key_pressed->scancode == sf::Keyboard::Scan::Left)
+                        pac->set_direction(MoveDirection::LEFT);
+                    else if (key_pressed->scancode == sf::Keyboard::Scan::Up)
+                        pac->set_direction(MoveDirection::UP);
+                    else if (key_pressed->scancode == sf::Keyboard::Scan::Down)
+                        pac->set_direction(MoveDirection::DOWN);
                 }
             }
         }
@@ -127,12 +144,16 @@ void Client::run_game()
         }
         #endif
 
-        game_instance->update(dt);
+        for (auto& game : games)
+            game->update(dt);
 
         window.clear();
-        drawer.draw_map(game_instance->get_map_layout());
-        drawer.draw_game_entities(game_instance->get_all_entities());
-        drawer.draw_score(game_instance->get_score());
+        for (int i = 0; i < 4; ++i) {
+            window.setView(views[i]);
+            drawers[i]->draw_map(games[i]->get_map_layout());
+            drawers[i]->draw_game_entities(games[i]->get_all_entities());
+            drawers[i]->draw_score(games[i]->get_score());
+        }
         window.display();
     }
 }
