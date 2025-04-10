@@ -71,9 +71,6 @@ void Client::run_game()
 
     Drawer drawer(window);
 
-    std::vector<std::vector<int>> grid(31, std::vector<int>(28, 1)); // Example grid
-    std::vector<sf::Vector2f> entities = {{5, 5}, {10, 10}};       // Example entities
-
     while (window.isOpen() && is_connected)
     {
         while (const std::optional event = window.pollEvent())

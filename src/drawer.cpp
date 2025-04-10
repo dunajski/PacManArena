@@ -1,6 +1,5 @@
 #include "game_entity.h"
 #include "drawer.h"
-#include "game.h"
 
 Drawer::Drawer(sf::RenderWindow& window)
     : window(window), game_offset_x((1920 - 560) / 2.0f), game_offset_y((1080 - 620) / 2.0f) {}
@@ -12,8 +11,8 @@ void Drawer::draw_game_entities(const std::vector<std::unique_ptr<GameEntity>>& 
 
         sf::Shape* shape = entity->get_shape();
         auto draw_position = sf::Vector2f(
-            game_offset_x + entity->get_position().x * tile_size,
-            game_offset_y + entity->get_position().y * tile_size
+            game_offset_x + entity->get_position().x * tile_size + tile_size/2.0f,
+            game_offset_y + entity->get_position().y * tile_size + tile_size/2.0f
         );
         shape->setPosition(draw_position);
         window.draw(*shape);

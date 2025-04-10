@@ -33,5 +33,6 @@ public:
     void initialize_map();
 
     const std::vector<std::vector<int>>& get_map_layout() const { return map_layout; }
+    void set_entities_positions();
 };
 
