@@ -106,7 +106,9 @@ void Game::set_entities_positions()
                 auto pacman = std::make_unique<Pacman>();
                 pacman->init_shape(tile);
                 pacman->make_visible();
+                auto raw_ptr = pacman.get();
                 add_game_entity(std::move(pacman), {x_pos, y_pos});
+                pacman_ptr = raw_ptr;
             }
             else if (cell == 5)
             {
@@ -115,6 +117,17 @@ void Game::set_entities_positions()
                 ghost->make_visible();
                 add_game_entity(std::move(ghost), {x_pos, y_pos});
             }
+        }
+    }
+}
+
+void Game::update(float dt)
+{
+    for (auto& entity : game_entities)
+    {
+        if (entity && entity->is_e_visible())
+        {
+            entity->update(dt, map_layout);
         }
     }
 }

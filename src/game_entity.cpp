@@ -1,15 +1,14 @@
 #include "game_entity.h"
-
 #include <iostream>
 
-void GameEntity::set_position(float x, float y)
+void GameEntity::set_position(int x, int y)
 {
     if (x < 0 || y < 0) // Validate position
     {
         std::cerr << "Invalid position: (" << x << ", " << y << ")" << std::endl;
         return;
     }
-    position = sf::Vector2f(x, y);
+    position = sf::Vector2i(x, y);
 }
 
 void GameEntity::set_position(const Position& pos)
@@ -31,8 +30,8 @@ GameEntity::~GameEntity()
 void GameEntity::set_shape(std::unique_ptr<sf::Shape> new_shape) {
     shape = std::move(new_shape);
     if (shape)
-        shape->setPosition(position);
+        shape->setPosition(sf::Vector2f(position));
 }
 void GameEntity::init_shape(float tile_size) {
-    // by default nothing, shall be done in derivied class
+    // by default nothing, shall be done in derived class
 }

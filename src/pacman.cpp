@@ -51,3 +51,79 @@ void Pacman::init_shape(float tile_size) {
     // Finally, pass our completed shape to set_shape
     set_shape(std::move(pacman_shape));
 }
+
+bool Pacman::can_move_to(Position pos, const std::vector<std::vector<int>>& map_data)
+{
+    // check if we will be outside game are at 'pos'
+    auto pos_x = pos.x;
+    auto pos_y = pos.y;
+
+    // I can change first row [0], because all columns are the same length
+    if (pos_x > map_data[0].size() ||
+        pos_y > map_data.size() ||
+        pos_x < 0 ||
+        pos_y < 0)
+    {
+        return false; // cannot move here
+    }
+
+    if (map_data[pos_y][pos_x] == 1) return false; // can not move into wall position '1' - wall, magic number
+
+    // otherwise, 'pos' is fine to move
+    return true;
+}
+
+void Pacman::update(float dt, const std::vector<std::vector<int>>& map_data)
+{
+    time_acc += dt;
+
+    auto step_time = 1.0f / speed;
+
+    while (time_acc >= step_time)
+    {
+        time_acc -= step_time;
+
+        if (requested_direction != MoveDirection::NO_DIR)
+        {
+            // Compute what position we'd have if we used the *requested* direction:
+            int try_x = get_position().x;
+            int try_y = get_position().y;
+            switch (requested_direction) {
+            case MoveDirection::UP:    try_y -= 1; break;
+            case MoveDirection::DOWN:  try_y += 1; break;
+            case MoveDirection::LEFT:  try_x -= 1; break;
+            case MoveDirection::RIGHT: try_x += 1; break;
+            default: break;
+            }
+
+            if (can_move_to({ try_x, try_y }, map_data))
+            {
+                curr_direction = requested_direction;
+            }
+
+            // requested handled - waiting for another move
+            requested_direction = MoveDirection::NO_DIR;
+        }
+
+        int new_x_pos = get_position().x;
+        int new_y_pos = get_position().y;
+
+        switch (curr_direction) {
+        case MoveDirection::UP:    new_y_pos -= 1; break;
+        case MoveDirection::DOWN:  new_y_pos += 1; break;
+        case MoveDirection::LEFT:  new_x_pos -= 1; break;
+        case MoveDirection::RIGHT: new_x_pos += 1; break;
+        default: break;
+        }
+
+        if (can_move_to(Position{ new_x_pos, new_y_pos }, map_data))
+        {
+            set_position(new_x_pos, new_y_pos);
+        }
+    }
+}
+
+void Pacman::set_direction(MoveDirection direction)
+{
+    requested_direction = direction;
+}

@@ -2,16 +2,10 @@
 #include "common.h"
 #include <vector>
 #include <memory>
+#include "pacman.h"
 
 class GameEntity;
-
-struct Position {
-    int x;
-    int y;
-
-    Position(int x = 0, int y = 0) : x(x), y(y) {}
-};
-
+class Pacman;
 class Game
 {
 private:
@@ -20,6 +14,7 @@ private:
     EGameState game_state{EGameState::NOT_STARTED};
     std::vector<std::unique_ptr<GameEntity>> game_entities;
     std::vector<std::vector<int>> map_layout;
+    Pacman* pacman_ptr {nullptr};
 public:
     Game() = default;
     ~Game() = default;
@@ -34,5 +29,9 @@ public:
 
     const std::vector<std::vector<int>>& get_map_layout() const { return map_layout; }
     void set_entities_positions();
+
+    Pacman* get_pacman() const { return pacman_ptr;}
+
+    void update(float dt);
 };
 

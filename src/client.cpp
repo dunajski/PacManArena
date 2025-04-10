@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "client.h"
 #include "drawer.h"
+#include "pacman.h"
 
 #include "game.h"
 
@@ -71,13 +72,36 @@ void Client::run_game()
 
     Drawer drawer(window);
 
+    sf::Clock clock;
+
     while (window.isOpen() && is_connected)
     {
+        auto dt = clock.restart().asSeconds();
         while (const std::optional event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
             {
                 window.close();
+            }
+            else if (const auto* key_pressed = event->getIf<sf::Event::KeyPressed>())
+            {
+                auto pac = game_instance->get_pacman();
+                if (key_pressed->scancode == sf::Keyboard::Scan::Right)
+                {
+                    pac->set_direction(MoveDirection::RIGHT);
+                }
+                else if (key_pressed->scancode == sf::Keyboard::Scan::Left)
+                {
+                    pac->set_direction(MoveDirection::LEFT);
+                }
+                else if (key_pressed->scancode == sf::Keyboard::Scan::Up)
+                {
+                    pac->set_direction(MoveDirection::UP);
+                }
+                else if (key_pressed->scancode == sf::Keyboard::Scan::Down)
+                {
+                    pac->set_direction(MoveDirection::DOWN);
+                }
             }
         }
         #if RUN_ONLY_CLIENT
@@ -102,6 +126,8 @@ void Client::run_game()
             }
         }
         #endif
+
+        game_instance->update(dt);
 
         window.clear();
         drawer.draw_map(game_instance->get_map_layout());
