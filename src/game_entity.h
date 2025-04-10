@@ -3,6 +3,9 @@
 #include "common.h"
 #include "SFML/Graphics/Shape.hpp"
 
+/**
+ * @brief Base class for all game entities (Pacman, Ghost, Dot, PowerDot).
+ */
 class GameEntity {
 private:
     sf::Vector2i position = sf::Vector2i(0, 0);
@@ -23,9 +26,11 @@ public:
     virtual void init_shape(float tile_size);
     sf::Shape* get_shape() const { return shape.get(); }
 
-    // all game entities (if needed) shall have their own update method that 'move' them between
-    // dt - delta_time according to map_data
-    // I want to use delta_time to draw every dt instead of every frame
+    /**
+     * @brief Updates the entity's logic each frame.
+     * @param dt Delta time since last update.
+     * @param map_data Layout data of the game map.
+     */
     virtual void update(float dt, const std::vector<std::vector<int>>& map_data) {}
 protected:
     void set_shape(std::unique_ptr<sf::Shape> new_shape);

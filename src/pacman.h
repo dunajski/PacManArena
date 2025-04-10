@@ -2,6 +2,9 @@
 #include <iostream>
 #include "game_entity.h"
 
+/**
+ * @brief Class representing Pacman.
+ */
 class Pacman : public GameEntity {
 public:
     Pacman() {std::cout << "Pacman constructor" << std::endl;}
@@ -19,6 +22,11 @@ private:
 
     float time_acc = 0.0f;
 
-    // checks that can move to position 'pos' according to layout - 'map_data'
+    /**
+     * @brief Checks if Pacman can move to the given position.
+     * @param pos The target position.
+     * @param map_data Map layout data.
+     * @return True if movement is possible, false otherwise.
+     */
     bool can_move_to(Position pos, const std::vector<std::vector<int>>& map_data);
 };

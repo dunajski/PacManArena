@@ -1,6 +1,9 @@
 #pragma once
 #include <SFML/Network.hpp>
 
+/**
+ * @brief Manages server-side networking logic for handling multiple clients.
+ */
 class Server
 {
 public:

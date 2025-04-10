@@ -1,6 +1,9 @@
 #pragma once
 #include "game_entity.h"
 
+/**
+ * @brief Class representing a Ghost enemy.
+ */
 class Ghost : public GameEntity {
 public:
     Ghost();

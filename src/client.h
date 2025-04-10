@@ -1,6 +1,9 @@
 #pragma once
 #include <SFML/Network.hpp>
 
+/**
+ * @brief Handles the client-side logic and network connection.
+ */
 class Client
 {
 public:
