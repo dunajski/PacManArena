@@ -66,6 +66,7 @@ void Client::run_game()
     window.setFramerateLimit(144);
 
     auto game_instance = std::make_unique<Game>();
+    game_instance->initialize_map();
     game_instance->start_game();
 
     Drawer drawer(window);
@@ -106,8 +107,7 @@ void Client::run_game()
         #endif
 
         window.clear();
-        // drawer.draw_grid(grid);
-        // drawer.draw_entities(entities);
+        drawer.draw_map(game_instance->get_map_layout());
         drawer.draw_game_entities(game_instance->get_all_entities());
         window.display();
     }

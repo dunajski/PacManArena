@@ -19,6 +19,7 @@ private:
     int score{0};
     EGameState game_state{EGameState::NOT_STARTED};
     std::vector<std::unique_ptr<GameEntity>> game_entities;
+    std::vector<std::vector<int>> map_layout;
 public:
     Game() = default;
     ~Game() = default;
@@ -28,5 +29,9 @@ public:
     bool load_game_entities();
     bool add_game_entity(std::unique_ptr<GameEntity> entity, const Position& position);
     const std::vector<std::unique_ptr<GameEntity>>& get_all_entities() const;
+
+    void initialize_map();
+
+    const std::vector<std::vector<int>>& get_map_layout() const { return map_layout; }
 };
 

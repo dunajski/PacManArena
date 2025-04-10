@@ -6,12 +6,12 @@
 class Drawer {
 public:
     Drawer(sf::RenderWindow& window);
-    void draw_grid(const std::vector<std::vector<int>>& grid);
-    void draw_entities(const std::vector<sf::Vector2f>& entity_positions);
+    float get_tile_size() const {return tile_size;}
+    void draw_map(const std::vector<std::vector<int>>& grid);
     void draw_game_entities(const std::vector<std::unique_ptr<GameEntity>>& game_entities);
 private:
     sf::RenderWindow& window;
-    float tileSize;
-    float gameOffsetX;
-    float gameOffsetY;
+    static constexpr float tile_size = 560.0f / 25.0f;
+    float game_offset_x;
+    float game_offset_y;
 };
